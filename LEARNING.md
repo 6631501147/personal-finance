@@ -141,3 +141,45 @@ export const createTransaction = (req, res) => {
 cd backend
 npm run dev
 ```
+
+## Stage 5 — MySQL Database
+
+### What I built
+Created a relational database structure for users, budgets, and transactions, and configured the Node.js backend to communicate with it.
+
+### Technologies used
+* MySQL
+* Node `mysql2` package
+
+### Important concepts
+* **Database**: A structured system for storing data permanently (unlike our old in-memory array which reset every server restart).
+* **Table**: A collection of related data (like a `transactions` table).
+* **Row / Column**: A row is one single record (one transaction), and columns define the specific attributes (amount, date, description).
+* **Primary key**: A unique ID for a row.
+* **Foreign key**: A column that links to a primary key in another table, creating a relationship (e.g., `user_id` inside transactions links to the `users` table).
+* **SQL (Structured Query Language)**: The code used to talk to the database (`SELECT`, `INSERT`, `UPDATE`, `DELETE`).
+
+### How it works
+The backend uses the `mysql2` package to establish a connection "pool" to the database using credentials stored safely in an `.env` file. Controllers now write SQL queries instead of pushing to an array.
+
+---
+
+## Stage 6 — Connect Vue + Express + MySQL
+
+### What I built
+Wired the frontend to the backend so the Vue dashboard fetches real data from the Express API, completing the full-stack loop.
+
+### Technologies used
+* Browser `fetch` API
+
+### Important concepts
+* **Frontend API Service**: Centralizing network requests in Vue (via `useTransactions.js`) instead of writing raw `fetch` calls randomly in components.
+* **Request Flow**: 
+  1. Vue sends HTTP request (e.g. `GET /api/transactions`)
+  2. Express receives the request and runs a SQL query
+  3. MySQL returns data to Express
+  4. Express converts it to JSON and sends it back to Vue
+  5. Vue updates its reactive data, instantly rendering it on the screen.
+
+### Things I should practice myself
+* Open the browser's Network tab (F12) and watch the API requests go out when you submit a new transaction.

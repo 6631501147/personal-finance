@@ -1,31 +1,64 @@
-﻿import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 
-const transactions = ref(JSON.parse(localStorage.getItem('finance_transactions')) || [])
-
-watch(transactions, (newVal) => {
-  localStorage.setItem('finance_transactions', JSON.stringify(newVal))
-}, { deep: true })
+const transactions = ref([])
+const API_URL = 'http://localhost:3000/api/transactions'
 
 export function useTransactions() {
-  const addTransaction = (txn) => {
-    transactions.value.push({ ...txn, id: Date.now().toString() })
-  }
-
-  const updateTransaction = (id, updatedTxn) => {
-    const index = transactions.value.findIndex(t => t.id === id)
-    if (index !== -1) {
-      transactions.value[index] = { ...updatedTxn, id }
+  const fetchTransactions = async () => {
+    try {
+      const res = await fetch(API_URL)
+      const data = await res.json()
+      transactions.value = data
+    } catch (err) {
+      console.error('Failed to fetch transactions:', err)
     }
   }
 
-  const deleteTransaction = (id) => {
-    transactions.value = transactions.value.filter(t => t.id !== id)
+  const addTransaction = async (txn) => {
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(txn)
+      })
+      const data = await res.json()
+      transactions.value.push(data)
+    } catch (err) {
+      console.error('Failed to add transaction:', err)
+    }
+  }
+
+  const updateTransaction = async (id, updatedTxn) => {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTxn)
+      })
+      const data = await res.json()
+      const index = transactions.value.findIndex(t => t.id === id)
+      if (index !== -1) transactions.value[index] = data
+    } catch (err) {
+      console.error('Failed to update transaction:', err)
+    }
+  }
+
+  const deleteTransaction = async (id) => {
+    try {
+      await fetch(`${API_URL}/${id}`, { method: 'DELETE' })
+      transactions.value = transactions.value.filter(t => t.id !== id)
+    } catch (err) {
+      console.error('Failed to delete transaction:', err)
+    }
   }
 
   const totalIncome = computed(() => transactions.value.filter(t => t.type === 'Income').reduce((sum, t) => sum + parseFloat(t.amount), 0))
   const totalExpenses = computed(() => transactions.value.filter(t => t.type === 'Expense').reduce((sum, t) => sum + parseFloat(t.amount), 0))
   const totalBalance = computed(() => totalIncome.value - totalExpenses.value)
   const savingsRate = computed(() => totalIncome.value > 0 ? ((totalIncome.value - totalExpenses.value) / totalIncome.value) * 100 : 0)
+
+  // Fetch immediately
+  fetchTransactions()
 
   return {
     transactions,
