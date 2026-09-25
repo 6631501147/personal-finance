@@ -46,15 +46,15 @@ const catIcons = {
 
       <span class="nav-section-label">Settings</span>
 
-      <a class="nav-link" href="#" @click.prevent>
+      <router-link to="/profile" class="nav-link" active-class="active">
         <span class="material-symbols-rounded nav-icon">manage_accounts</span>
         <span>Profile</span>
-      </a>
+      </router-link>
 
-      <a class="nav-link" href="#" @click.prevent>
+      <router-link to="/settings" class="nav-link" active-class="active">
         <span class="material-symbols-rounded nav-icon">settings</span>
         <span>Settings</span>
-      </a>
+      </router-link>
     </nav>
 
     <div class="sidebar-user">
