@@ -1,5 +1,4 @@
-﻿<script setup>
-import { defineProps, defineEmits } from 'vue'
+<script setup>
 
 defineProps(['isOpen'])
 const emit = defineEmits(['close'])

@@ -68,3 +68,76 @@ const totalIncome = computed(() => {
 cd frontend
 npm run dev
 ```
+
+## Stage 4 — Node.js + Express Backend
+
+### What I built
+Created a robust backend REST API using Node.js and Express.js to handle HTTP requests for transactions.
+
+### Technologies used
+* Node.js (Runtime)
+* Express.js (Web framework)
+* JavaScript (ES Modules)
+
+### Important concepts
+* **Node.js**: A JavaScript runtime that allows you to run JS on the server instead of just in the browser.
+* **Express**: A fast, minimal web framework for Node.js that makes it easy to handle HTTP requests and routes.
+* **REST API**: An architectural style for an API that uses HTTP requests to access and use data. It treats data as "resources" (like a transaction).
+* **HTTP Methods**: 
+  * `GET`: Fetch data (Read)
+  * `POST`: Send new data (Create)
+  * `PUT`: Update existing data completely
+  * `DELETE`: Remove data
+* **Routes**: URLs that map to specific actions in our code (e.g., `/api/transactions`).
+* **Controllers**: The actual logic functions that run when a route is matched. They take the request (`req`), process it, and send a response (`res`).
+* **Middleware**: Functions that run "in the middle" of a request before it reaches the controller. We used it for validation (checking if the user sent a description) and error handling.
+* **JSON**: JavaScript Object Notation. The standard format for sending data across the web.
+* **HTTP Status Codes**: Numbers that tell the browser what happened. 
+  * `200` OK
+  * `201` Created
+  * `400` Bad Request (e.g. missing fields)
+  * `404` Not Found
+  * `500` Internal Server Error
+
+### How it works
+1. The server starts in `app.js` and listens on Port 3000.
+2. A request (like `POST /api/transactions`) hits the server.
+3. Express passes the request to the router (`transactionRoutes.js`).
+4. The router sends the request through the `validateTransaction` middleware. If data is missing, it responds with a `400` error and stops.
+5. If valid, the request moves to the `createTransaction` controller.
+6. The controller creates the object, pushes it to our temporary in-memory array, and sends a `201 Created` JSON response back to the client.
+
+### Important files
+* `backend/src/app.js`: Server setup and configuration.
+* `backend/src/routes/transactionRoutes.js`: Maps endpoints to controller functions.
+* `backend/src/controllers/transactionController.js`: The CRUD logic.
+* `backend/src/middleware/validation.js`: Validates incoming data.
+
+### Example
+**Creating a new transaction (Controller)**
+```javascript
+export const createTransaction = (req, res) => {
+    const newTransaction = {
+        id: Date.now().toString(),
+        ...req.body // The data sent by the user
+    };
+    transactions.push(newTransaction);
+    res.status(201).json(newTransaction); // 201 means "Created successfully"
+};
+```
+
+### What I should be able to explain in an interview
+1. **What is Node.js?** A runtime environment that allows running JavaScript on a server.
+2. **What is Express?** A minimal framework for Node.js used to build APIs quickly.
+3. **What is a REST API?** A standard way for frontends to talk to backends using HTTP methods (GET, POST, PUT, DELETE).
+4. **What is middleware?** Functions that intercept requests before they reach the main logic (used for validation, authentication).
+
+### Things I should practice myself
+* Use an API tool like **Postman** or **Insomnia** (or a VS Code extension like Thunder Client) to send a `GET` request to `http://localhost:3000/api/transactions`.
+* Try sending a `POST` request with missing data (like no amount) to see the `400` error message from your validation middleware.
+
+### How to run this stage
+```bash
+cd backend
+npm run dev
+```

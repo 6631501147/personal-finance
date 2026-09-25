@@ -1,5 +1,5 @@
-﻿<script setup>
-import { defineEmits, ref, onMounted } from 'vue'
+<script setup>
+import { ref, onMounted } from 'vue'
 
 const emit = defineEmits(['toggle-sidebar'])
 const currentDate = ref('')

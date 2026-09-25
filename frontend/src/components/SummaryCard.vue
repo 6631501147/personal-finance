@@ -1,5 +1,4 @@
-﻿<script setup>
-import { defineProps } from 'vue'
+<script setup>
 
 const props = defineProps({
   title: String,
