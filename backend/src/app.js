@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import transactionRoutes from './routes/transactionRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { initDb } from './config/db.js';
 
 dotenv.config();
 
@@ -19,6 +20,11 @@ app.use('/api/transactions', transactionRoutes);
 // Global Error Handling Middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// Initialize DB then start server
+initDb().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}).catch(err => {
+    console.error("Failed to initialize database:", err);
 });
