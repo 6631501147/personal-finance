@@ -1,6 +1,9 @@
 {
   "name": "findash",
   "version": "1.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "build": "cd frontend && npm install && npm run build && cd ../backend && rm -rf node_modules && npm install",
     "start": "cd backend && node src/app.js"
