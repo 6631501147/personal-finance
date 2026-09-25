@@ -1,18 +1,17 @@
-﻿<script setup>
+<script setup>
 import { ref } from 'vue'
 import Sidebar from './components/Sidebar.vue'
-import Header from './components/Header.vue'
+import Topbar from './components/Topbar.vue'
 
-const isSidebarOpen = ref(false)
-const toggleSidebar = () => { isSidebarOpen.value = !isSidebarOpen.value }
+const sidebarOpen = ref(false)
 </script>
 
 <template>
-  <div class="dashboard-container">
-    <Sidebar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
-    <main class="main-content">
-      <Header @toggle-sidebar="toggleSidebar" />
-      <div class="dashboard-content">
+  <div class="app-layout">
+    <Sidebar :open="sidebarOpen" @close="sidebarOpen = false" />
+    <main class="main">
+      <Topbar @toggle="sidebarOpen = !sidebarOpen" />
+      <div class="page-content">
         <router-view />
       </div>
     </main>

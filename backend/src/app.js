@@ -15,6 +15,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.get('/', (req, res) => {
+    res.send('Personal Finance API is running! Access the frontend at http://localhost:5173');
+});
 app.use('/api/transactions', transactionRoutes);
 
 // Global Error Handling Middleware

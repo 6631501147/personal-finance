@@ -40,8 +40,8 @@ export const initDb = async () => {
   `);
   
   // Insert a mock user if one doesn't exist so we satisfy foreign keys
-  await db.run(\`
+  await db.run(`
     INSERT OR IGNORE INTO users (id, full_name, email, password_hash) 
     VALUES (1, 'John Doe', 'john@example.com', 'hashedpassword')
-  \`);
+  `);
 };
