@@ -1,9 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import transactionRoutes from './routes/transactionRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { initDb } from './config/db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -15,10 +20,15 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.get('/', (req, res) => {
-    res.send('Personal Finance API is running! Access the frontend at http://localhost:5173');
-});
 app.use('/api/transactions', transactionRoutes);
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
+
+// Catch-all route for Vue Router history mode
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+});
 
 // Global Error Handling Middleware
 app.use(errorHandler);

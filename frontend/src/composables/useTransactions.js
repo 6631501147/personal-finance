@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 
 const transactions = ref([])
-const API_URL = 'http://localhost:3000/api/transactions'
+const API_URL = import.meta.env.PROD ? '/api/transactions' : 'http://localhost:3000/api/transactions'
 
 export function useTransactions() {
   const fetchTransactions = async () => {

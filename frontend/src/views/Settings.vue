@@ -8,7 +8,7 @@ const dateFormat = ref('MM/DD/YYYY')
 const darkMode = ref(true)
 const notifications = ref(true)
 const autoSave = ref(true)
-const apiUrl = ref('http://localhost:3000')
+const apiUrl = ref(import.meta.env.PROD ? window.location.origin : 'http://localhost:3000')
 
 const saved = ref(false)
 const exporting = ref(false)
@@ -30,7 +30,8 @@ const clearData = () => {
 const exportPDF = async () => {
   exporting.value = true
   try {
-    const res = await fetch('http://localhost:3000/api/transactions')
+    const fetchUrl = import.meta.env.PROD ? '/api/transactions' : 'http://localhost:3000/api/transactions'
+    const res = await fetch(fetchUrl)
     const transactions = await res.json()
 
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
