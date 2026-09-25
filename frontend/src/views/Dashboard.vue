@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useTransactions } from '../composables/useTransactions'
 
-const { transactions, totalBalance, totalIncome, totalExpenses, savingsRate } = useTransactions()
+const { transactions, totalBalance, totalIncome, totalExpenses, savingsRate, formatCurrency } = useTransactions()
 
-const fmt = (n) => '$' + parseFloat(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fmt = formatCurrency
 
 const recent = computed(() => [...transactions.value].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 6))
 

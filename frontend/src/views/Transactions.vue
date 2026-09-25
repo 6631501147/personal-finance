@@ -2,9 +2,9 @@
 import { ref, computed } from 'vue'
 import { useTransactions } from '../composables/useTransactions'
 
-const { transactions, addTransaction, updateTransaction, deleteTransaction } = useTransactions()
+const { transactions, addTransaction, updateTransaction, deleteTransaction, formatCurrency } = useTransactions()
 
-const fmt = (n) => '$' + parseFloat(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fmt = formatCurrency
 
 const search = ref('')
 const filterType = ref('All')

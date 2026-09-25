@@ -1,6 +1,13 @@
 <script setup>
+import { computed } from 'vue'
+import { profileState } from '../store'
+
 defineProps(['open'])
 const emit = defineEmits(['close'])
+
+const userInitials = computed(() => {
+  return profileState.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+})
 
 const catIcons = {
   Salary: { icon: '💰', cls: 'cat-salary' },
@@ -58,9 +65,9 @@ const catIcons = {
     </nav>
 
     <div class="sidebar-user">
-      <div class="user-avatar">JD</div>
+      <div class="user-avatar">{{ userInitials }}</div>
       <div class="user-info">
-        <div class="name">John Doe</div>
+        <div class="name">{{ profileState.fullName }}</div>
         <div class="role">Personal Account</div>
       </div>
     </div>

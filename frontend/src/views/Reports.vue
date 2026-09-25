@@ -11,9 +11,9 @@ import { useTransactions } from '../composables/useTransactions'
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title, PointElement, LineElement, Filler)
 
-const { transactions, totalIncome, totalExpenses, totalBalance, savingsRate } = useTransactions()
+const { transactions, totalIncome, totalExpenses, totalBalance, savingsRate, formatCurrency } = useTransactions()
 
-const fmt = (n) => '$' + parseFloat(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+const fmt = formatCurrency
 
 const catColors = {
   Salary: '#10b981', Food: '#f59e0b', Transportation: '#3b82f6',
@@ -120,7 +120,7 @@ const barOpts = {
   ...chartOpts,
   scales: {
     x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#475569' } },
-    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#475569', callback: v => '$' + v.toLocaleString() } }
+    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#475569', callback: v => formatCurrency(v) } }
   },
   plugins: { ...chartOpts.plugins, legend: { display: true, labels: { color: '#94a3b8', padding: 16, boxWidth: 12 } } }
 }
@@ -129,7 +129,7 @@ const lineOpts = {
   ...chartOpts,
   scales: {
     x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#475569' } },
-    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#475569', callback: v => '$' + v.toLocaleString() } }
+    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#475569', callback: v => formatCurrency(v) } }
   }
 }
 

@@ -2,12 +2,9 @@
 import { ref } from 'vue'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { settingsState } from '../store'
+import { useTransactions } from '../composables/useTransactions'
 
-const currency = ref('USD')
-const dateFormat = ref('MM/DD/YYYY')
-const darkMode = ref(true)
-const notifications = ref(true)
-const autoSave = ref(true)
 const apiUrl = ref(import.meta.env.PROD ? window.location.origin : 'http://localhost:3000')
 
 const saved = ref(false)
@@ -20,10 +17,11 @@ const save = () => {
 
 const clearData = () => {
   if (confirm('Are you sure? This will clear all local settings.')) {
-    currency.value = 'USD'
-    dateFormat.value = 'MM/DD/YYYY'
-    notifications.value = true
-    autoSave.value = true
+    settingsState.currency = 'USD'
+    settingsState.dateFormat = 'MM/DD/YYYY'
+    settingsState.darkMode = true
+    settingsState.notifications = true
+    settingsState.autoSave = true
   }
 }
 
@@ -56,7 +54,8 @@ const exportPDF = async () => {
     const totalExpenses = transactions.filter(t => t.type === 'Expense').reduce((s, t) => s + parseFloat(t.amount), 0)
     const balance = totalIncome - totalExpenses
     const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1) : '0.0'
-    const fmt = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    const { formatCurrency } = useTransactions()
+    const fmt = formatCurrency
 
     const boxes = [
       { label: 'NET BALANCE', value: fmt(balance), color: [99, 102, 241] },
@@ -169,7 +168,7 @@ const exportPDF = async () => {
         <div style="display: flex; flex-direction: column; gap: 20px;">
           <div class="form-field">
             <label>Currency</label>
-            <select v-model="currency">
+            <select v-model="settingsState.currency">
               <option value="USD">🇺🇸 USD — US Dollar ($)</option>
               <option value="THB">🇹🇭 THB — Thai Baht (฿)</option>
               <option value="EUR">🇪🇺 EUR — Euro (€)</option>
@@ -179,7 +178,7 @@ const exportPDF = async () => {
           </div>
           <div class="form-field">
             <label>Date Format</label>
-            <select v-model="dateFormat">
+            <select v-model="settingsState.dateFormat">
               <option value="MM/DD/YYYY">MM/DD/YYYY</option>
               <option value="DD/MM/YYYY">DD/MM/YYYY</option>
               <option value="YYYY-MM-DD">YYYY-MM-DD</option>
@@ -200,18 +199,18 @@ const exportPDF = async () => {
         </div>
         <div style="display: flex; flex-direction: column; gap: 20px;">
           <div v-for="item in [
-            { label: 'Dark Mode', sub: 'Use the dark interface theme', key: 'darkMode', model: darkMode },
-            { label: 'Notifications', sub: 'Show in-app notifications', key: 'notifications', model: notifications },
-            { label: 'Auto Save', sub: 'Save changes automatically', key: 'autoSave', model: autoSave },
+            { label: 'Dark Mode', sub: 'Use the dark interface theme', key: 'darkMode' },
+            { label: 'Notifications', sub: 'Show in-app notifications', key: 'notifications' },
+            { label: 'Auto Save', sub: 'Save changes automatically', key: 'autoSave' },
           ]" :key="item.key" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border);">
             <div>
               <div style="font-size: 0.9rem; font-weight: 500; margin-bottom: 3px;">{{ item.label }}</div>
               <div style="font-size: 0.76rem; color: var(--text-muted);">{{ item.sub }}</div>
             </div>
             <label style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer; flex-shrink:0;">
-              <input type="checkbox" v-model="item.model.value" style="opacity:0; width:0; height:0; position:absolute;" />
-              <span :style="{ position:'absolute', top:0, left:0, right:0, bottom:0, borderRadius:'24px', transition:'background 0.3s', background: item.model.value ? 'var(--accent)' : 'rgba(255,255,255,0.1)' }"></span>
-              <span :style="{ position:'absolute', top:'3px', left: item.model.value ? '23px' : '3px', width:'18px', height:'18px', background:'white', borderRadius:'50%', transition:'left 0.3s', boxShadow:'0 2px 4px rgba(0,0,0,0.3)' }"></span>
+              <input type="checkbox" v-model="settingsState[item.key]" style="opacity:0; width:0; height:0; position:absolute;" />
+              <span :style="{ position:'absolute', top:0, left:0, right:0, bottom:0, borderRadius:'24px', transition:'background 0.3s', background: settingsState[item.key] ? 'var(--accent)' : 'rgba(255,255,255,0.1)' }"></span>
+              <span :style="{ position:'absolute', top:'3px', left: settingsState[item.key] ? '23px' : '3px', width:'18px', height:'18px', background:'white', borderRadius:'50%', transition:'left 0.3s', boxShadow:'0 2px 4px rgba(0,0,0,0.3)' }"></span>
             </label>
           </div>
         </div>

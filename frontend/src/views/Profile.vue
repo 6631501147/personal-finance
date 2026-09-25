@@ -1,13 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { profileState } from '../store'
 
-const profile = ref({
-  fullName: 'John Doe',
-  email: 'john@example.com',
-  phone: '+66 81 234 5678',
-  occupation: 'Software Developer',
-  bio: 'Tracking finances to reach financial independence.',
-})
+const profile = profileState
 
 const saved = ref(false)
 

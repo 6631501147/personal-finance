@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { settingsState } from '../store'
 
 const transactions = ref([])
 const API_URL = import.meta.env.PROD ? '/api/transactions' : 'http://localhost:3000/api/transactions'
@@ -57,6 +58,14 @@ export function useTransactions() {
   const totalBalance = computed(() => totalIncome.value - totalExpenses.value)
   const savingsRate = computed(() => totalIncome.value > 0 ? ((totalIncome.value - totalExpenses.value) / totalIncome.value) * 100 : 0)
 
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: settingsState.currency,
+      minimumFractionDigits: 2
+    }).format(amount)
+  }
+
   // Fetch immediately
   fetchTransactions()
 
@@ -68,6 +77,7 @@ export function useTransactions() {
     totalIncome,
     totalExpenses,
     totalBalance,
-    savingsRate
+    savingsRate,
+    formatCurrency
   }
 }

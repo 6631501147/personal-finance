@@ -1,185 +1,31 @@
-# Personal Finance Dashboard — Learning Notes
+# Learning Notes
 
-## Stage 3 — Convert to Vue.js
+## Stage 1: Basic UI
+* Built the basic structure using HTML, CSS, and JavaScript.
+* Created the dashboard layout and static UI elements.
 
-### What I built
-Converted the Vanilla JS application into a Single Page Application (SPA) using Vue 3 and Vite. Split the monolithic HTML and JS into reusable Vue components (Sidebar, Header, SummaryCard) and separate pages (Dashboard, Transactions) managed by Vue Router.
+## Stage 2: Interactive Features
+* Made the transactions list interactive using JavaScript.
+* Implemented the ability to add and delete transactions in the browser (without saving to a real database yet).
 
-### Technologies used
-* Vue.js 3 (Composition API)
-* Vite (Build tool)
-* Vue Router (Navigation)
-* JavaScript
-* HTML/CSS
+## Stage 3: Full-Stack Application & Deployment (Current Stage)
+In this stage, the project was completely transformed into a professional, production-ready web application:
 
-### Important concepts
-* **Vue.js**: A progressive JavaScript framework for building user interfaces. It makes building complex, interactive UIs easier by keeping the UI in sync with the underlying data automatically.
-* **Components**: Independent, reusable pieces of a UI. Think of them as custom HTML tags (e.g., `<Sidebar />` or `<SummaryCard />`) that contain their own structure, styling, and logic.
-* **Props**: Custom attributes you can register on a component to pass data from a parent component down to a child component (like passing a title and amount to a SummaryCard).
-* **Events**: Actions that happen in the app (like clicks). In Vue, a child component can "emit" an event to tell its parent that something happened (like the Sidebar telling the App it wants to close).
-* **Reactive data**: Data that Vue actively watches. When reactive data changes, Vue automatically updates the parts of the HTML that depend on it, without us having to write DOM manipulation code.
-* **Computed properties**: Reactive variables that derive their value from other reactive data. They automatically recalculate when their dependencies change (like updating Total Balance automatically when Transactions change).
-* **Vue Router**: The official router for Vue.js. It allows you to switch between different "pages" (Views) in a single-page application without reloading the entire browser window.
+1. **Frontend Framework (Vue 3 + Vite):** 
+   - Moved away from plain HTML/JS and rebuilt the UI using Vue 3. 
+   - Vue makes it much easier to build complex, interactive components (like the Sidebar, Dashboard, and Settings) and manage state (data) across the app.
 
-### How it works
-1. The app starts in `index.html` and mounts the Vue application in `main.js`.
-2. `App.vue` serves as the layout wrapper, containing the `Sidebar` and `Header` components.
-3. Depending on the URL, Vue Router injects either the `Dashboard.vue` or `Transactions.vue` component into the center area (`<router-view>`).
-4. The transaction logic is stored in a composable file (`useTransactions.js`). This file reads/writes to `localStorage` and provides reactive arrays and computed totals to any component that needs them.
+2. **Backend Server (Node.js + Express.js):**
+   - Created a real backend API server. Instead of the frontend doing all the work, it now asks the backend to fetch or save data via HTTP requests (`GET`, `POST`, `PUT`, `DELETE`).
 
-### Important files
-* `frontend/index.html`: The main entry point.
-* `frontend/src/main.js`: Initializes the Vue app and Router.
-* `frontend/src/App.vue`: The root layout component.
-* `frontend/src/router/index.js`: Defines the routes (/ and /transactions).
-* `frontend/src/composables/useTransactions.js`: Shared business logic.
-* `frontend/src/views/Transactions.vue`: The page to manage transactions.
+3. **Database (SQLite):**
+   - Replaced temporary browser storage with a real SQL database. 
+   - We used `sqlite3`, which saves all financial data into a physical file on the server. This means data persists even if you refresh or close the browser!
 
-### Example
-**Reactive Data and Computed Properties**
-```javascript
-import { ref, computed } from 'vue'
+4. **Analytics & PDF Export:**
+   - Integrated `Chart.js` to create beautiful Doughnut and Bar charts for visualizing income vs expenses.
+   - Used `jsPDF` to generate a downloadable PDF report summarizing the user's financial data.
 
-// Reactive data
-const transactions = ref([])
-
-// Computed property: automatically updates if transactions changes
-const totalIncome = computed(() => {
-  return transactions.value
-    .filter(t => t.type === 'Income')
-    .reduce((sum, t) => sum + parseFloat(t.amount), 0)
-})
-```
-
-### What I should be able to explain in an interview
-1. **Why use Vue instead of vanilla JS?** It eliminates manual DOM manipulation and makes code modular, reusable, and easier to maintain.
-2. **What is a component?** A self-contained, reusable block of UI (HTML, CSS, JS).
-3. **What are props?** A way to pass data downwards from parent to child components.
-4. **What is a computed property?** A value derived from reactive data that automatically recalculates when its dependencies change.
-5. **How does Vue Router work?** It maps URLs to specific Vue components, allowing navigation without page reloads.
-
-### Things I should practice myself
-* Create a new route and view component called `Budgets.vue`.
-* Pass a new prop to the `SummaryCard` component to change its text color.
-* Add a `console.log()` inside the `totalIncome` computed property to see exactly when it runs.
-
-### How to run this stage
-```bash
-cd frontend
-npm run dev
-```
-
-## Stage 4 — Node.js + Express Backend
-
-### What I built
-Created a robust backend REST API using Node.js and Express.js to handle HTTP requests for transactions.
-
-### Technologies used
-* Node.js (Runtime)
-* Express.js (Web framework)
-* JavaScript (ES Modules)
-
-### Important concepts
-* **Node.js**: A JavaScript runtime that allows you to run JS on the server instead of just in the browser.
-* **Express**: A fast, minimal web framework for Node.js that makes it easy to handle HTTP requests and routes.
-* **REST API**: An architectural style for an API that uses HTTP requests to access and use data. It treats data as "resources" (like a transaction).
-* **HTTP Methods**: 
-  * `GET`: Fetch data (Read)
-  * `POST`: Send new data (Create)
-  * `PUT`: Update existing data completely
-  * `DELETE`: Remove data
-* **Routes**: URLs that map to specific actions in our code (e.g., `/api/transactions`).
-* **Controllers**: The actual logic functions that run when a route is matched. They take the request (`req`), process it, and send a response (`res`).
-* **Middleware**: Functions that run "in the middle" of a request before it reaches the controller. We used it for validation (checking if the user sent a description) and error handling.
-* **JSON**: JavaScript Object Notation. The standard format for sending data across the web.
-* **HTTP Status Codes**: Numbers that tell the browser what happened. 
-  * `200` OK
-  * `201` Created
-  * `400` Bad Request (e.g. missing fields)
-  * `404` Not Found
-  * `500` Internal Server Error
-
-### How it works
-1. The server starts in `app.js` and listens on Port 3000.
-2. A request (like `POST /api/transactions`) hits the server.
-3. Express passes the request to the router (`transactionRoutes.js`).
-4. The router sends the request through the `validateTransaction` middleware. If data is missing, it responds with a `400` error and stops.
-5. If valid, the request moves to the `createTransaction` controller.
-6. The controller creates the object, pushes it to our temporary in-memory array, and sends a `201 Created` JSON response back to the client.
-
-### Important files
-* `backend/src/app.js`: Server setup and configuration.
-* `backend/src/routes/transactionRoutes.js`: Maps endpoints to controller functions.
-* `backend/src/controllers/transactionController.js`: The CRUD logic.
-* `backend/src/middleware/validation.js`: Validates incoming data.
-
-### Example
-**Creating a new transaction (Controller)**
-```javascript
-export const createTransaction = (req, res) => {
-    const newTransaction = {
-        id: Date.now().toString(),
-        ...req.body // The data sent by the user
-    };
-    transactions.push(newTransaction);
-    res.status(201).json(newTransaction); // 201 means "Created successfully"
-};
-```
-
-### What I should be able to explain in an interview
-1. **What is Node.js?** A runtime environment that allows running JavaScript on a server.
-2. **What is Express?** A minimal framework for Node.js used to build APIs quickly.
-3. **What is a REST API?** A standard way for frontends to talk to backends using HTTP methods (GET, POST, PUT, DELETE).
-4. **What is middleware?** Functions that intercept requests before they reach the main logic (used for validation, authentication).
-
-### Things I should practice myself
-* Use an API tool like **Postman** or **Insomnia** (or a VS Code extension like Thunder Client) to send a `GET` request to `http://localhost:3000/api/transactions`.
-* Try sending a `POST` request with missing data (like no amount) to see the `400` error message from your validation middleware.
-
-### How to run this stage
-```bash
-cd backend
-npm run dev
-```
-
-## Stage 5 — MySQL Database
-
-### What I built
-Created a relational database structure for users, budgets, and transactions, and configured the Node.js backend to communicate with it.
-
-### Technologies used
-* MySQL
-* Node `mysql2` package
-
-### Important concepts
-* **Database**: A structured system for storing data permanently (unlike our old in-memory array which reset every server restart).
-* **Table**: A collection of related data (like a `transactions` table).
-* **Row / Column**: A row is one single record (one transaction), and columns define the specific attributes (amount, date, description).
-* **Primary key**: A unique ID for a row.
-* **Foreign key**: A column that links to a primary key in another table, creating a relationship (e.g., `user_id` inside transactions links to the `users` table).
-* **SQL (Structured Query Language)**: The code used to talk to the database (`SELECT`, `INSERT`, `UPDATE`, `DELETE`).
-
-### How it works
-The backend uses the `mysql2` package to establish a connection "pool" to the database using credentials stored safely in an `.env` file. Controllers now write SQL queries instead of pushing to an array.
-
----
-
-## Stage 6 — Connect Vue + Express + MySQL
-
-### What I built
-Wired the frontend to the backend so the Vue dashboard fetches real data from the Express API, completing the full-stack loop.
-
-### Technologies used
-* Browser `fetch` API
-
-### Important concepts
-* **Frontend API Service**: Centralizing network requests in Vue (via `useTransactions.js`) instead of writing raw `fetch` calls randomly in components.
-* **Request Flow**: 
-  1. Vue sends HTTP request (e.g. `GET /api/transactions`)
-  2. Express receives the request and runs a SQL query
-  3. MySQL returns data to Express
-  4. Express converts it to JSON and sends it back to Vue
-  5. Vue updates its reactive data, instantly rendering it on the screen.
-
-### Things I should practice myself
-* Open the browser's Network tab (F12) and watch the API requests go out when you submit a new transaction.
+5. **Cloud Deployment (Render.com):**
+   - Packaged the Vue frontend and Node backend together into a single "Web Service".
+   - Deployed the code to Render.com so the website is permanently hosted live on the internet!
